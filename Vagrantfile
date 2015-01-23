@@ -14,14 +14,14 @@ Vagrant.configure("2") do |config|
 SCRIPT
   config.vm.provision "shell", inline: $update_apt_get
 
-  # Add Python3.3
+  # Add Python3.4
   $install_python3 = <<SCRIPT
-  if ! which python3.3 &> /dev/null; then
+  if ! which python3.4 &> /dev/null; then
     # https://github.com/limetext/lime/blob/dbd2d9f6d0ea3f28b763b40c7d505d03570bd779/.travis.yml#L6-L8
     sudo apt-get install python-software-properties -y
     echo 'yes' | sudo add-apt-repository ppa:fkrull/deadsnakes
     sudo apt-get update
-    sudo apt-get install python3.3 python3.3-dev -y
+    sudo apt-get install python3.4 python3.4-dev -y
   fi
 SCRIPT
   config.vm.provision "shell", inline: $install_python3
@@ -45,13 +45,14 @@ SCRIPT
   # Install go
   $install_go = <<SCRIPT
   if ! test -d /vagrant/code/go &> /dev/null; then
+    echo 'Install GO!'
     # Download go
     # https://code.google.com/p/go/wiki/Downloads?tm=2
     cd /tmp
-    wget https://storage.googleapis.com/golang/go1.2.2.linux-amd64.tar.gz
+    wget https://storage.googleapis.com/golang/go1.4.1.linux-amd64.tar.gz
 
     # Extract go and add to PATH
-    sudo tar -C /usr/local -xzvf go1.2.2.linux-amd64.tar.gz
+    sudo tar -C /usr/local -xzvf go1.4.1.linux-amd64.tar.gz
     sudo bash -c "echo 'export PATH=\$PATH:/usr/local/go/bin' >> /etc/profile"
     source /etc/profile
   fi
@@ -61,6 +62,7 @@ SCRIPT
   # Install limetext/lime
   $install_lime = <<SCRIPT
   if ! test -d /vagrant/code/go; then
+    echo 'Install Lime!'
     # Define GOPATH for packages
     # http://golang.org/doc/code.html#GOPATH
     export GOPATH=/vagrant/code/go
